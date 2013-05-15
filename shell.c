@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <errno.h>
 
 #define MAX_BUFF 1024
 #define MAX_ARR  1024
 
-struct Command
-{
-    char *description;
-    char *name;
-};
+char *scripts[] = {"archivos.sh", "informacion_sistema.sh","logs.sh",
+    "paquetes.sh", "procesos.sh", "usuarios.sh"};
+int scripts_len = 6;
 
 void parse_args(char *buffer, char **args,
         size_t args_size, size_t *num_args, char *sep_str);
@@ -19,6 +21,26 @@ void exec_cmd(char *arg)
     char *args[MAX_ARR];
     size_t num_args;
     parse_args(arg, args, MAX_ARR, &num_args, " \t\n");
+    if (!strcmp(args[0], "quit") || !strcmp(args[0], "exit"))
+        exit(0);
+    int i;
+    pid_t pid;
+    int *status;
+    char *buf[MAX_BUFF];
+    buf[0] = arg;
+    for (i = 0; i < scripts_len; i++) {
+        if (!strcmp(args[0], scripts[i])) {
+            pid = fork();
+            if (pid) {
+                pid = wait(status);
+            } else { 
+                if(execvp(args[0], args)) {
+                    puts(strerror(errno));
+                    exit(127);
+                }
+            }
+        }
+    }
 }
 
 void exec_shell_mode()
