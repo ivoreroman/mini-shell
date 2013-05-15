@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <fcntl.h>
 
 #define MAX_BUFF 1024
 #define MAX_ARR  1024
@@ -16,20 +17,11 @@ int scripts_len = 6;
 void parse_args(char *buffer, char **args,
         size_t args_size, size_t *num_args, char *sep_str);
 
-void exec_cmd(char *arg)
+void exec_cmd(char **args) 
 {
-    char *args[MAX_ARR];
-    size_t num_args = 0;
-    parse_args(arg, args, MAX_ARR, &num_args, " \t\n");
-    if (!num_args)
-        return;
-    if (!strcmp(args[0], "quit") || !strcmp(args[0], "exit"))
-        exit(0);
     int i;
     pid_t pid;
     int *status;
-    char *buf[MAX_BUFF];
-    buf[0] = arg;
     for (i = 0; i < scripts_len; i++) {
         if (!strcmp(args[0], scripts[i])) {
             pid = fork();
@@ -43,6 +35,20 @@ void exec_cmd(char *arg)
             }
         }
     }
+    perror("Comando no encontrado");
+}
+
+void exec_cmd_shell(char *arg)
+{
+    char *args[MAX_ARR];
+    size_t num_args = 0;
+    parse_args(arg, args, MAX_ARR, &num_args, " \t\n");
+    if (!num_args)
+        return;
+    if (!strcmp(args[0], "quit") || !strcmp(args[0], "exit"))
+        exit(0);
+    
+    exec_cmd(args);
 }
 
 void exec_shell_mode()
@@ -59,10 +65,38 @@ void exec_shell_mode()
             parse_args(buff, args, MAX_ARR, &num_args, ";");
             size_t i;
             for (i = 0; i < num_args; i++) {
-                exec_cmd(args[i]);
+                exec_cmd_shell(args[i]);
             }
         }
     }
+}
+
+void exec_cmd_batch(char *arg)
+{
+    char *args[MAX_ARR];
+    size_t num_args = 0;
+    parse_args(arg, args, MAX_ARR, &num_args, " \t\n");
+    if (!num_args)
+        return;
+    if (!strcmp(args[0], "quit") || !strcmp(args[0], "exit")) {
+        fclose(stdout);
+        exit(0);
+    }
+
+    if (!strcmp(args[0], "-o")) {
+        int fd = open(args[1], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+        dup2(fd, 1);
+        close(fd);
+    }
+    if (!strcmp(args[0], "-e")) {
+        int fd = open(args[1], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+        dup2(fd, 2);
+        close(fd);
+    }
+
+    exec_cmd(args);
+
+
 }
 
 void exec_batch_mode(char *argv[], int argc)
@@ -83,7 +117,7 @@ void exec_batch_mode(char *argv[], int argc)
     parse_args(buff, args, MAX_ARR, &num_args, ",");
     size_t i;
     for (i = 0; i < num_args; i++)
-        exec_cmd(args[i]);
+        exec_cmd_batch(args[i]);
 }
 
 void parse_args(char *buffer, char **args,
@@ -113,7 +147,8 @@ int main(int argc, char *argv[])
 {
     if (argc < 2)
         exec_shell_mode();
-    else
+    else {
         exec_batch_mode(argv, argc);
+    }
     return 0;
 }
