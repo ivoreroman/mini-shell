@@ -11,8 +11,8 @@
 #define MAX_ARR  1024
 
 char *scripts[] = {"archivos.sh", "informacion_sistema.sh","logs.sh",
-    "paquetes.sh", "procesos.sh", "usuarios.sh"};
-int scripts_len = 6;
+    "paquetes.sh", "procesos.sh", "usuarios.sh", "help.sh"};
+int scripts_len = 7;
 
 void parse_args(char *buffer, char **args,
         size_t args_size, size_t *num_args, char *sep_str);
@@ -87,16 +87,44 @@ void exec_cmd_batch(char *arg)
         int fd = open(args[1], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
         dup2(fd, 1);
         close(fd);
+        return;
     }
     if (!strcmp(args[0], "-e")) {
         int fd = open(args[1], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
         dup2(fd, 2);
         close(fd);
+        return;
+    }
+
+    if (!strcmp(args[0], "-f")) {
+        exec_file_cmd(args[1]);
+        return;
     }
 
     exec_cmd(args);
+}
 
-
+void exec_file_cmd(char *filename)
+{
+    FILE *file = fopen(filename, "r");
+    char *str[MAX_BUFF];
+    char *args[MAX_ARR];
+    size_t num_args;
+    if (!file) {
+        perror("Archivo no encontrado");
+        fclose(file);
+        return;
+    }
+    while (fgets(str, MAX_BUFF, file) != NULL) {
+        parse_args(str, args, MAX_ARR, &num_args, ";");
+        size_t i;
+        for (i = 0; i < num_args; i++) {
+            if (!num_args)
+                continue;
+            exec_cmd_shell(args[i]);
+        }
+    }
+    fclose(file);
 }
 
 void exec_batch_mode(char *argv[], int argc)
