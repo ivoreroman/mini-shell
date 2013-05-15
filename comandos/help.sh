@@ -6,7 +6,12 @@ case "$1" in
 		;;
 
 	"informacion_sistema.sh" )
-		echo "ayuda"
+		  echo "Nombre del sistema (opción por default)" 
+		  echo "Distribución y versión (opción por default)" 
+		  echo "Versión del kernel (opción por default)" 
+		  echo "Memoria real (usada y libre) (opción -memreal)" 
+		  echo "Memoria virtual (usada y libre) (opción -memvirtual)" 
+		  echo "Espacio por file system en disco (usado y libre)"
 		;;
 
 	"logs.sh" )

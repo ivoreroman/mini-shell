@@ -16,6 +16,7 @@ int scripts_len = 7;
 
 void parse_args(char *buffer, char **args,
         size_t args_size, size_t *num_args, char *sep_str);
+void exec_file_cmd(char *filename);
 
 void exec_cmd(char **args) 
 {

@@ -8,4 +8,13 @@ function basic_data {
     echo "Permisos: "$(ls -l ${1} | awk '{ print $1 }')
 }
 
-basic_data $1
+case "$1" in
+	"" )
+		basic_data $1
+		;;
+
+	"help" )
+		echo "$ archivos.sh"
+		echo " Mostrara ruta absoluta, tamano, dueno, grupo y permisos"
+		;;
+esac
