@@ -42,7 +42,6 @@ void exec_cmd(char **args)
             }
         }
     }
-    perror("Comando no encontrado");
 }
 
 // Ejecuta un comando en modo shell
@@ -114,7 +113,6 @@ void exec_cmd_batch(char *arg)
     if (!strcmp(args[0], "-o")) {
         int fd = open(args[1], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
         dup2(fd, 1);
-        close(fd);
         return;
     }
 
@@ -122,7 +120,6 @@ void exec_cmd_batch(char *arg)
     if (!strcmp(args[0], "-e")) {
         int fd = open(args[1], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
         dup2(fd, 2);
-        close(fd);
         return;
     }
 
@@ -145,7 +142,6 @@ void exec_file_cmd(char *filename)
     size_t num_args;
     if (!file) {
         perror("Archivo no encontrado");
-        fclose(file);
         return;
     }
 

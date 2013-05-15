@@ -9,11 +9,11 @@ function basic_data {
 }
 
 case "$1" in
-	"" )
+	* )
 		basic_data $1
 		;;
 
-	"help" )
+	"help"|"")
 		echo "$ archivos.sh"
 		echo " Mostrara ruta absoluta, tamano, dueno, grupo y permisos"
 		;;

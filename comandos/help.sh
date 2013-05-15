@@ -58,4 +58,5 @@ case "$1" in
 
 	* )
 		echo "No hay ayuda para ese comando"
+		;;
 esac
