@@ -2,7 +2,8 @@
 
 case "$1" in
 	"archivos.sh" )
-		echo "ayuda"
+		echo "$ archivos.sh"
+		echo " Mostrara ruta absoluta, tamano, dueno, grupo y permisos"
 		;;
 
 	"informacion_sistema.sh" )
@@ -53,10 +54,15 @@ case "$1" in
         ;;
 
     "" )
-		echo "ayuda"
+		echo "archivos.sh: Muestra datos basicos de un archivo"
+		echo "informacion_sistema.sh: Informacion basica del sistema"
+		echo "logs.sh: Enlista los logs disponibles"
+		echo "paquetes.sh: Dice si un paquete no esta instalado"
+		echo "procesos.sh: Presenta los procesos"
+		echo "usuarios.sh: Informacion sobre usuarios y grupos"
 		;;
 
 	* )
-		echo "No hay ayuda para ese comando"
+		echo "Comando no soportado"
 		;;
 esac
