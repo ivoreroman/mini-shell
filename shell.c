@@ -41,6 +41,27 @@ void exec_shell_mode()
     }
 }
 
+void exec_batch_mode(char *argv[], int argc)
+{
+    char buff[MAX_BUFF]; 
+    buff[0] = 0;
+    int offset = 0;
+    while (argv++, --argc) {
+        int next_to_write = MAX_BUFF - offset;
+        int written = snprintf(buff + offset, next_to_write, "%s ",*argv);
+        if (next_to_write < written)
+            break;
+        offset += written;
+    }
+    
+    char *args[MAX_ARR];
+    size_t num_args;
+    parse_args(buff, args, MAX_ARR, &num_args, ",");
+    size_t i;
+    for (i = 0; i < num_args; i++)
+        exec_cmd(args[i]);
+}
+
 void parse_args(char *buffer, char **args,
         size_t args_size, size_t *num_args, char *sep_str)
 {
@@ -68,6 +89,7 @@ int main(int argc, char *argv[])
 {
     if (argc < 2)
         exec_shell_mode();
-
+    else
+        exec_batch_mode(argv, argc);
     return 0;
 }
