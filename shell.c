@@ -12,7 +12,14 @@ struct Command
 };
 
 void parse_args(char *buffer, char **args,
-        size_t args_size, size_t *num_args);
+        size_t args_size, size_t *num_args, char *sep_str);
+
+void exec_cmd(char *arg)
+{
+    char *args[MAX_ARR];
+    size_t num_args;
+    parse_args(arg, args, MAX_ARR, &num_args, " \t\n");
+}
 
 void exec_shell_mode()
 {
@@ -21,22 +28,29 @@ void exec_shell_mode()
     char *args[MAX_ARR];
 
     while (1) {
-        printf(">>");
+        printf(">> ");
         fgets(buff,MAX_BUFF, stdin);
         buff[strlen(buff) - 1] = 0;
-        parse_args(buff, args, MAX_ARR, &num_args);
+        if (buff) {
+            parse_args(buff, args, MAX_ARR, &num_args, ";");
+            size_t i;
+            for (i = 0; i < num_args; i++) {
+                exec_cmd(args[i]);
+            }
+        }
     }
 }
 
 void parse_args(char *buffer, char **args,
-        size_t args_size, size_t *num_args)
+        size_t args_size, size_t *num_args, char *sep_str)
 {
     char **temp;
     char *buf_args[args_size];
     size_t i, j;
     args[0] = buffer;
+    buf_args[0] = buffer;
 
-    for (temp = buf_args; (*temp = strsep(&buffer, "; \n\t")) != NULL;) {
+    for (temp = buf_args; (*temp = strsep(&buffer, sep_str)) != NULL;) {
         if ((*temp != '\0') && (++temp >= &buf_args[args_size]))
                 break;
     }
