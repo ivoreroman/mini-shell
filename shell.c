@@ -19,8 +19,10 @@ void parse_args(char *buffer, char **args,
 void exec_cmd(char *arg)
 {
     char *args[MAX_ARR];
-    size_t num_args;
+    size_t num_args = 0;
     parse_args(arg, args, MAX_ARR, &num_args, " \t\n");
+    if (!num_args)
+        return;
     if (!strcmp(args[0], "quit") || !strcmp(args[0], "exit"))
         exit(0);
     int i;
@@ -33,7 +35,7 @@ void exec_cmd(char *arg)
             pid = fork();
             if (pid) {
                 pid = wait(status);
-            } else { 
+            } else {
                 if(execvp(args[0], args)) {
                     puts(strerror(errno));
                     exit(127);
