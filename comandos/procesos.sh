@@ -16,8 +16,11 @@ function memory {
 
 case "$1" in
     "usuario")
-        ps aufx | head -n 1
-        ps aufx | grep ${2}
+        PROC=$(ps aufx | awk '{print $1}' | grep ${2}) 
+        if [ -n "$PROC" ]; then
+            ps aufx | head -n 1
+            ps aufx | grep ${2}
+        fi
         ;;
 
     "")
