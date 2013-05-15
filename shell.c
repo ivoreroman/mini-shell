@@ -40,8 +40,11 @@ void exec_cmd(char **args)
                     exit(127);
                 }
             }
+            break;
         }
     }
+    if (i == scripts_len)
+        perror("No existe el comando");
 }
 
 // Ejecuta un comando en modo shell
