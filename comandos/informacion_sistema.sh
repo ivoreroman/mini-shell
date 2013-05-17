@@ -33,9 +33,12 @@ function disk_usage {
     echo "Libre: "$free
 }
 
-echo "hostname: "get_hostname
-echo "version: "get_version
-echo "kernel: "kernel
+echo "hostname: "
+get_hostname
+echo "version: "
+get_version
+echo "kernel: "
+kernel
 echo "Memoria"
 memory
 echo "Memoria virtual"
